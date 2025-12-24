@@ -50,6 +50,53 @@ LINKEDIN_PASSWORD=your_password
 go build
 ```
 
+## Quick Start (5 Minutes)
+
+### Prerequisites Check
+```bash
+# Verify Go is installed
+go version  # Should be 1.24.5 or higher
+
+# Verify you're in the project directory
+cd linkedin-automation
+ls -la  # Should show main.go, README.md, go.mod, etc.
+```
+
+### Setup Steps
+```bash
+# Step 1: Download dependencies
+go mod tidy
+
+# Step 2: Create credentials file (.env)
+# On Windows (PowerShell):
+@"
+LINKEDIN_EMAIL=your_email@example.com
+LINKEDIN_PASSWORD=your_password
+"@ | Out-File -Encoding UTF8 .env
+
+# On Linux/Mac:
+cat > .env << EOF
+LINKEDIN_EMAIL=your_email@example.com
+LINKEDIN_PASSWORD=your_password
+EOF
+
+# Step 3: Verify .env file exists
+ls -la .env  # Should show .env file
+
+# Step 4: Run the application
+go run main.go
+```
+
+### What to Expect (Timeline)
+- **0-2 seconds**: "Starting LinkedIn Automation" log appears
+- **2-3 seconds**: Browser window launches (Chrome opens)
+- **3-5 seconds**: Navigates to LinkedIn login page
+- **5-15 seconds**: Enters credentials and logs in (watch it type)
+- **15-20 seconds**: "Login Successful" message appears
+- **20-25 seconds**: Mouse movements visible on page (cursor moving)
+- **25-30 seconds**: Page scrolls up and down automatically
+- **30+ seconds**: Browser stays open showing home page
+
 ## Usage
 
 Run the application:
@@ -88,6 +135,134 @@ go run main.go
 [2025-12-24 19:08:39] INFO: Executing random page scrolling...
 [2025-12-24 19:08:40] INFO: Stealth actions completed
 ```
+
+## First Run Checklist
+
+Before running the application, verify:
+
+- [ ] Go 1.24.5+ is installed: `go version`
+- [ ] You're in the project directory: `pwd` or `cd linkedin-automation`
+- [ ] Dependencies are installed: `go mod tidy`
+- [ ] `.env` file exists with credentials: `cat .env`
+- [ ] `.env` has valid LinkedIn email and password
+- [ ] Chrome/Chromium is installed (or let Rod download it)
+- [ ] No other applications are using port 9222 (Rod's default debugging port)
+- [ ] Windows Defender isn't blocking Rod (add exclusion if needed)
+
+## Build & Run Commands
+
+### Development (with hot reload)
+```bash
+# Install go-task or use go run directly
+go run main.go
+```
+
+### Production Build
+```bash
+# Build executable
+go build -o linkedin-automation.exe
+
+# Run the executable
+./linkedin-automation.exe
+```
+
+### Build with Optimizations
+```bash
+# Smaller binary size
+go build -ldflags="-s -w" -o linkedin-automation.exe
+
+# Run it
+./linkedin-automation.exe
+```
+
+### Cross-Platform Building
+```bash
+# Build for Windows (if on Windows)
+go build -o linkedin-automation.exe
+
+# Build for Linux (if on Linux/Mac)
+go build -o linkedin-automation
+
+# Build for macOS (if on Mac)
+go build -o linkedin-automation
+
+# Cross-compile Windows binary from Linux/Mac
+GOOS=windows GOARCH=amd64 go build -o linkedin-automation.exe
+```
+
+## Verification Steps (Testing Actual Functionality)
+
+### Step 1: Verify Compilation
+```bash
+go build
+# Should complete with no errors
+ls -la linkedin-automation.exe  # File should exist
+```
+
+### Step 2: Run and Verify Each Feature
+
+**A. Verify Credential Loading**
+```bash
+go run main.go
+# Check logs for: "Starting LinkedIn Automation"
+# Check that browser launches
+```
+
+**B. Verify LinkedIn Login**
+- Watch the browser window
+- See email field being filled automatically
+- See password field being filled automatically
+- See the "Sign in" button being clicked
+- Wait for page to load and check logs for "Login Successful"
+
+**C. Verify Mouse Movements** ✅
+- After login, watch the **mouse cursor** on the page
+- You should see the cursor move to **3-5 different positions**
+- Each movement is followed by a **300-800ms pause**
+- Check logs for: "Executing random mouse movements..."
+
+**D. Verify Page Scrolling** ✅
+- After mouse movements, watch the **page scroll**
+- Page should scroll down **3-5 times**
+- Each scroll is 200-600 pixels
+- Followed by 800-1500ms pause (reading time)
+- Check logs for: "Executing random page scrolling..."
+
+**E. Verify Logging**
+- Check that **every action is logged**
+- Look for log format: `[TIMESTAMP] INFO: Action name`
+- Verify no ERROR messages in logs
+
+### Step 3: Test with Different Credentials
+```bash
+# Edit .env with test account
+# Run again
+go run main.go
+
+# Verify it works with different credentials
+```
+
+### Step 4: Test Build Executable
+```bash
+# Build the project
+go build
+
+# Run the executable instead of 'go run'
+./linkedin-automation.exe
+
+# Should work identically to 'go run main.go'
+```
+
+### Success Indicators ✅
+- [x] Browser launches automatically
+- [x] Credentials are entered without user interaction
+- [x] Login completes successfully
+- [x] Mouse movements are visible on the page
+- [x] Page scrolling occurs automatically
+- [x] All actions are logged with timestamps
+- [x] No error messages in console
+- [x] Program completes without crashing
+- [x] Browser closes cleanly when done
 
 ## Project Structure
 
@@ -183,6 +358,177 @@ Customize behavior simulation in:
 - All delays are randomized to appear natural
 
 ## Troubleshooting
+
+### Common Issues & Solutions
+
+#### 1. ".env file not found" error
+
+**Problem**: Application exits with error about missing `.env` file
+
+**Solution**:
+```bash
+# Verify .env exists in project root
+ls -la .env
+
+# If missing, create it
+echo "LINKEDIN_EMAIL=your_email@example.com" > .env
+echo "LINKEDIN_PASSWORD=your_password" >> .env
+
+# Verify contents
+cat .env
+```
+
+#### 2. "go: command not found"
+
+**Problem**: Go is not installed or not in PATH
+
+**Solution**:
+```bash
+# Check if Go is installed
+go version
+
+# If not, download from https://golang.org/dl/
+# Add Go to your PATH environment variable
+# Restart PowerShell/Terminal after installation
+```
+
+#### 3. "Failed to start Browser" error
+
+**Problem**: Chrome/Chromium not installed
+
+**Solution**:
+```bash
+# Option 1: Let Rod download Chrome automatically
+# The first run will download a Chromium instance
+
+# Option 2: Install Chrome manually
+# Download from https://www.google.com/chrome/
+
+# Option 3: Set custom Chrome path in browser.go
+.Bin("C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe")
+```
+
+#### 4. Windows Defender Blocking Rod
+
+**Problem**: "Operation did not complete successfully because the file contains a virus or potentially unwanted software"
+
+**Solution**:
+```powershell
+# Add exclusion to Windows Defender
+Add-MpPreference -ExclusionPath "$env:TEMP\leakless-*" -Force
+
+# Or manually:
+# 1. Open Windows Security
+# 2. Go to Virus & threat protection → Virus & threat protection settings
+# 3. Click "Manage settings" under "Virus & threat protection settings"
+# 4. Scroll down to "Exclusions"
+# 5. Click "Add exclusions"
+# 6. Select "Folder" and add: C:\Users\YourUsername\AppData\Local\Temp\leakless-*
+```
+
+#### 5. "Login Failed: email input not found"
+
+**Problem**: Email input field selector is not found
+
+**Solution**:
+```bash
+# LinkedIn HTML may have changed
+# Edit internal/automation/login.go and update the selector
+emailInput, err := page.Element(`input#username`)
+
+# To find the correct selector:
+# 1. Open LinkedIn login page in Chrome
+# 2. Right-click on email field → Inspect
+# 3. Find the correct ID or class name
+# 4. Update the selector in login.go
+```
+
+#### 6. No Mouse Movements or Scrolling Visible
+
+**Problem**: Application runs but mouse movements and scrolling not visible
+
+**Solution**:
+```bash
+# Check 1: Browser must be visible (non-headless)
+# In browser.go, ensure:
+Headless(false)  # NOT true
+
+# Check 2: Verify stealth actions are being called
+# Check logs for "Executing random mouse movements..."
+# If missing, check main.go has this line:
+browser.PerformStealthActions(page)
+
+# Check 3: Increase delay times in stealth files
+# Edit internal/stealth/mouse.go and increase:
+time.Sleep(time.Duration(1000+r.Intn(1000)) * time.Millisecond)
+
+# Check 4: Verify page is fully loaded
+# Wait longer before performing stealth actions
+stealth.RandomDelay(3000, 5000)  // 3-5 second wait
+```
+
+#### 7. "Login verification timeout"
+
+**Problem**: Application takes too long to verify login
+
+**Solution**:
+```bash
+# Check internet connection - LinkedIn may be slow
+# Increase timeout in internal/automation/login.go:
+timeout := time.After(60 * time.Second)  // Increase to 60 seconds
+
+# Check if LinkedIn is accessible
+# Try opening LinkedIn in regular Chrome browser
+```
+
+#### 8. "Module not found" error
+
+**Problem**: `linkedin-automation/internal/...` module not found
+
+**Solution**:
+```bash
+# Ensure you're in the correct directory
+pwd  # Should end with linkedin-automation
+
+# Reinstall dependencies
+go mod tidy
+go mod download
+
+# Verify go.mod exists
+ls -la go.mod
+```
+
+#### 9. "Port 9222 already in use"
+
+**Problem**: Another instance of the application is running
+
+**Solution**:
+```bash
+# On Windows (PowerShell):
+Get-Process | Where-Object {$_.ProcessName -like "*chrome*"} | Stop-Process
+
+# On Linux/Mac:
+pkill chrome
+
+# Or just restart your terminal/PowerShell
+```
+
+#### 10. Application runs but immediately exits
+
+**Problem**: No error message but program closes immediately
+
+**Solution**:
+```bash
+# Check that .env file has valid credentials
+cat .env
+
+# Check that credentials are correct
+# Try logging in manually to verify they work
+
+# Check for silent errors:
+go run main.go 2>&1 | tee output.log
+# This saves all output to output.log for review
+```
 
 ### Windows Defender Blocking Rod
 
